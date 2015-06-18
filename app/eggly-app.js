@@ -63,21 +63,44 @@ angular.module('Eggly', [
             "category": "Humor"
         }];
 
-        $scope.currentCetegory = null;
+        $scope.currentCategory = null;
+
+
+
+        function isCurrentCategory(category) {
+            return $scope.currentCategory !== null && category.name === $scope.currentCategory.name;
+        }
 
         function setCurrentCategory(category) {
-            $scope.currentCetegory = category;
+            $scope.currentCategory = category;
 
             cancelCreating();
             cancelEditing();
         }
 
-        function isCurrentCategory(category) {
-            return $scope.currentCetegory !== null && category.name === $scope.currentCetegory.name;
-        }
-
         $scope.setCurrentCategory = setCurrentCategory;
         $scope.isCurrentCategory = isCurrentCategory;
+
+        // ---------------------------------------------------------------------------------------------
+        // CRUD
+        //----------------------------------------------------------------------------------------------
+
+        function resetCreateForm() {
+            $scope.newBookmark = {
+                title: '',
+                url: '',
+                category: $scope.currentCategory.name
+            };
+        }
+
+        function createBookmark(bookmark) {
+            bookmark.id = $scope.bookmarks.length;
+            $scope.bookmarks.push(bookmark);
+
+            resetCreateForm();
+        }
+
+        $scope.createBookmark = createBookmark;
 
         // ---------------------------------------------------------------------------------------------
         // Creating and editing states
@@ -88,6 +111,8 @@ angular.module('Eggly', [
         function startCreating() {
             $scope.isCreating = true;
             $scope.isEditing = false;
+
+            resetCreateForm();
         }
 
         function cancelCreating() {
@@ -104,7 +129,7 @@ angular.module('Eggly', [
         }
 
         function shouldShowCreating() {
-            return $scope.currentCetegory && !$scope.isEditing;
+            return $scope.currentCategory && !$scope.isEditing;
         }
 
         function shouldShowEditing() {
